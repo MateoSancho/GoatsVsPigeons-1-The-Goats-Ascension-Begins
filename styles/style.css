@@ -9,8 +9,8 @@ body {
   padding: 20px;
   font-size: 30px;
   margin-top: 60px;
-  border-radius: 20px; 
-  font-family: Amatica SC ;
+  border-radius: 20px;
+  font-family: Amatica SC;
 }
 
 .container {
@@ -22,31 +22,35 @@ body {
 }
 
 #StartImages {
-    margin: 0;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    box-sizing: border-box;;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 #game-box {
   background-color: rgb(0, 0, 0);
-  width:600px;
-  height:400px;
+  width: 600px;
+  height: 400px;
 
   position: relative; /* allows us to position inner elements (absolute) related the the game-box */
   overflow: hidden; /* prevents elements to visually exit the game-box */
   user-select: none; /* prevents elements inside the game-box to be highlighted. This improves the user experience for click events on the game-box */
-  
-  background-image: url("../images/Fondo\ Casacadas.gif");
+
+  background-image: url("../images/Fondo Casacadas.gif");
   background-size: cover;
   background-position: center;
+  /* debug help: uncomment border if game-box is invisible
+  border: 2px solid rgba(255,255,255,0.2);
+  */
 }
 
 #game-box * {
   pointer-events: none; /* prevents elements in the game-box to be dragged. This improves the user experience for click events on the game-box  */
 }
 
-#game-screen, #game-over-screen {
+#game-screen,
+#game-over-screen {
   display: none;
 }
