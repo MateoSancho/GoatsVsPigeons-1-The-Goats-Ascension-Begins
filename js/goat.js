@@ -3,7 +3,7 @@ class Goat {
     //Properties defined for the Goat
     this.node = document.createElement("img");
     this.node.src = "../images/Goat.png";
-    // to add the node to the game-box on bird creation
+    // to add the node to the game-box on goat creation
     gameBoxNode.append(this.node);
 
     // add the initial values of position and dimension, using uniformity from main.js
