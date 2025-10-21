@@ -13,6 +13,16 @@ body {
   font-family: Amatica SC;
 }
 
+#restart-btn {
+  background-color: rgb(214, 168, 0);
+  color: rgb(0, 0, 0);
+  padding: 20px;
+  font-size: 30px;
+  margin-top: 60px;
+  border-radius: 20px;
+  font-family: Amatica SC;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -29,6 +39,22 @@ body {
   box-sizing: border-box;
 }
 
+.ImageLeft {
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+  width: 400px;
+  height: auto;
+}
+
+.ImageRigth {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  width: 300px;
+  height: auto;
+}
+
 #game-box {
   background-color: rgb(0, 0, 0);
   width: 600px;
@@ -36,18 +62,19 @@ body {
 
   position: relative; /* allows us to position inner elements (absolute) related the the game-box */
   overflow: hidden; /* prevents elements to visually exit the game-box */
-  user-select: none; /* prevents elements inside the game-box to be highlighted. This improves the user experience for click events on the game-box */
+  user-select: none; /* prevents elements inside the game-box to be highlighted */
 
-  background-image: url("../images/Fondo Casacadas.gif");
+  background-image: url("../images/Fondo\ Casacadas.gif");
   background-size: cover;
   background-position: center;
-  /* debug help: uncomment border if game-box is invisible
-  border: 2px solid rgba(255,255,255,0.2);
-  */
+}
+
+#floor {
+  pointer-events: none;
 }
 
 #game-box * {
-  pointer-events: none; /* prevents elements in the game-box to be dragged. This improves the user experience for click events on the game-box  */
+  pointer-events: none; /* prevents elements in the game-box to be dragged */
 }
 
 #game-screen,

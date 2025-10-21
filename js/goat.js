@@ -1,17 +1,16 @@
 class Goat {
   constructor() {
-    //this is where the properties will be defined
-    this.node = document.createElement("img"); // <img />
-    this.node.src = "../images/Goat normal.png"; //<img src="./images/flappy.png"/>
-    gameBoxNode.append(this.node); // to add the node to the game-box on bird creation
+    //Properties defined for the Goat
+    this.node = document.createElement("img");
+    this.node.src = "../images/Goat.png";
+    // to add the node to the game-box on bird creation
+    gameBoxNode.append(this.node);
 
-    // add the initial values of position and dimension
-  // use uniform entity size
-  this.width = ENTITY_SIZE;
-  this.height = ENTITY_SIZE;
-  this.x = 50;
-  // y so the goat is sitting in the same visible place as before (adjusted for new height)
-  this.y = 275;
+    // add the initial values of position and dimension, using uniformity from main.js
+    this.width = ENTITY_SIZE;
+    this.height = ENTITY_SIZE;
+    this.x = 50;
+    this.y = 275;
 
     // adjust the node with the initial values
     this.node.style.width = `${this.width}px`;
@@ -20,28 +19,41 @@ class Goat {
     this.node.style.top = `${this.y}px`;
     this.node.style.left = `${this.x}px`;
 
-    this.jumpSpeed = 40;
-    this.gravitySpeed = 2;
+    //Movement Speed
+    this.jumpSpeed = 50;
+    this.fallSpeed = 50;
   }
 
-  // this is where the methods will be defined
-  gravityEffect() {
-    //console.log("trying to move the bird down")
-    // apply gravity but stop at the floor if present
-    this.y += this.gravitySpeed;
-    // if a floor is present in the DOM, prevent falling through it
-    const floor = document.querySelector("#floor");
-    if (floor) {
-      const floorTop = parseFloat(floor.style.top);
-      const maxY = floorTop - this.height; // goat should sit on top of the floor
-      if (this.y > maxY) this.y = maxY;
-    }
-    this.node.style.top = `${this.y}px`;
-  }
-
+  //Variable of movement methods for Jump, Fall, Left and Right
   jump() {
-    // console.log("trying to make the bird jump")
     this.y -= this.jumpSpeed;
     this.node.style.top = `${this.y}px`;
+    // change image to jump image while jumping, then revert
+    const previousSrc = this.node.src;
+    this.node.src = "../images/goatjump.png";
+    // after 0,2 seconds the image revert to the initial image
+    setTimeout(() => {
+      this.node.src = previousSrc;
+    }, 200);
+  }
+
+  fall() {
+    this.y += this.fallSpeed;
+    const maxY = gameBoxNode.clientHeight - this.height;
+    if (this.y > maxY) this.y = maxY;
+    this.node.style.top = `${this.y}px`;
+  }
+
+  left() {
+    this.x -= 50;
+    if (this.x < 0) this.x = 0;
+    this.node.style.left = `${this.x}px`;
+  }
+
+  right() {
+    this.x += 50;
+    const maxX = gameBoxNode.clientWidth - this.width;
+    if (this.x > maxX) this.x = maxX;
+    this.node.style.left = `${this.x}px`;
   }
 }

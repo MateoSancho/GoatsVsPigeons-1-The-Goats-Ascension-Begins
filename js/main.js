@@ -1,29 +1,29 @@
 //* GLOBAL DOM ELEMENTS
 
-// screens
+//Screens
 const startScreenNode = document.querySelector("#start-screen");
 const gameScreenNode = document.querySelector("#game-screen");
 const gameOverScreenNode = document.querySelector("#game-over-screen");
 
-// buttons
+//Buttons
 const startBtnNode = document.querySelector("#start-btn");
 
-// game box
+//Game box
 const gameBoxNode = document.querySelector("#game-box");
 
 //* GLOBAL GAME VARIABLES
 
-// All entities will share the same size for this request
-const ENTITY_SIZE = 140;
+//Same size for all entities
+const ENTITY_SIZE = 50;
 
-let goatObj = null; //the game hasn't yet started, so we don't yet have the bird
+let goatObj = null; //The goat isn't at the beginnig yet
 let pigeonObj = null;
+let pigeonsArr = []; //Column of pigeons array
 let wormArr = [];
 
 let gameIntervalID = null;
 let wormIntervalID = null;
 let floorNode = null; // DOM node for the visual floor (created at game start)
-
 
 //* GLOBAL GAME FUNCTIONS
 function startGame() {
@@ -34,44 +34,65 @@ function startGame() {
   gameScreenNode.style.display = "flex";
 
   //Adding inicial game elements
-
   goatObj = new Goat();
-  pigeonObj = new Pigeon();
 
-  // create a visual floor at the starting place of the goat so it doesn't fall forever
-  // floor top will be right below the goat initial bottom
+  //Column of 6 pigeons
+  pigeonsArr = [];
+  const baseX = 520; //Starting x point from top pigeon
+  const baseY = 25; //Starting y point from top pigeon
+  const spacing = ENTITY_SIZE + 10; //Spacing between pigeons
+  for (let i = 0; i < 6; i++) {
+    const p = new Pigeon();
+    p.x = baseX;
+    p.y = baseY + i * spacing;
+    p.node.style.left = `${p.x}px`;
+    p.node.style.top = `${p.y}px`;
+    pigeonsArr.push(p);
+  }
+
+  //Store a reference to the rightmost (they all share same x) pigeon for fallback
+  pigeonObj = pigeonsArr[pigeonsArr.length - 1];
+
+  //Create a floor bottom floor tha will be right below the goat initial bottom
   floorNode = document.createElement("div");
   floorNode.id = "floor";
-  // position the floor using absolute coordinates inside the game box
+
+  //Placement of the floor using absolute coordinates inside the game box
   floorNode.style.position = "absolute";
   floorNode.style.left = "0px";
   floorNode.style.width = "100%";
   floorNode.style.height = "10px";
-  // place floor right under the goat
+
+  //Placement of the floor right under the goat
   floorNode.style.top = `${goatObj.y + goatObj.height}px`;
-  floorNode.style.background = "rgba(255,255,255,0.05)";
   gameBoxNode.append(floorNode);
 
   //Start the main game loop
   gameIntervalID = setInterval(gameLoop, Math.floor(1000 / 60)); //60fps
 
   //Start the extra intervals of the game
-  wormIntervalID = setInterval(wormSpawn, 2000);
+  wormIntervalID = setInterval(wormSpawn, 1000); //each second
 }
 
+//Function to spawn worms
 function wormSpawn() {
-  // spawn the worm to the right of the pigeon (as if the pigeon is shooting)
-  let spawnX = 600; // fallback spawn X (right side of the box)
-  let spawnY = 200; // fallback Y
-  if (pigeonObj) {
+  // spawn the worm randomly aligned with one of the pigeons in the column
+  let spawnX = 500;
+  let spawnY = 200;
+  if (pigeonsArr && pigeonsArr.length > 0) {
+    const idx = Math.floor(Math.random() * pigeonsArr.length); //Random X position
+    const p = pigeonsArr[idx];
+    spawnX = p.x + p.width + 10;
+    spawnY = p.y;
+  } else if (pigeonObj) {
     spawnX = pigeonObj.x + pigeonObj.width + 10;
-    // align vertically with the pigeon
     spawnY = pigeonObj.y;
   }
   let wormObj = new Worm(spawnX, spawnY);
   wormArr.push(wormObj);
 }
 
+//Despawn worm at certain point of the screen
 function checkwormDespwan() {
   if (wormArr.length !== 0 && wormArr[0].x < -100) {
     wormArr[0].node.remove();
@@ -79,43 +100,94 @@ function checkwormDespwan() {
   }
 }
 
+//Colision detection between the goat and the worms
 function checkGoatWormCollision() {
-  // birdObj
-  // pipeObj => many inside pipeArr
-  wormArr.forEach((eachwormObj) => {
-    if (
-      goatObj.x < eachwormObj.x + eachwormObj.width &&
-      goatObj.x + goatObj.width > eachwormObj.x &&
-      goatObj.y < eachwormObj.y + eachwormObj.height &&
-      goatObj.y + goatObj.height > eachwormObj.y
-    ) {
-      console.log("the goat collided with the worm");
+  //Use DOM bounding boxes for collision detection to be more robust
+  if (!goatObj) return;
+  const goatRect = goatObj.node.getBoundingClientRect();
+
+  //Compare with each worm's rect
+  for (let eachwormObj of wormArr) {
+    if (!eachwormObj || !eachwormObj.node) continue;
+    const wormRect = eachwormObj.node.getBoundingClientRect();
+
+    //Check intersection
+    const intersect = !(
+      goatRect.right < wormRect.left ||
+      goatRect.left > wormRect.right ||
+      goatRect.bottom < wormRect.top ||
+      goatRect.top > wormRect.bottom
+    );
+    if (intersect) {
+      console.log("the goat collided with the worm (DOM collision)");
       gameOver();
+      break;
     }
-  });
+  }
 }
 
 function gameOver() {
-  //1. we need to stop ALL intervals
+  //Stop all Intervals
   clearInterval(gameIntervalID);
   clearInterval(wormIntervalID);
 
-  //2. toggle the screen
+  //Stop the game screen and show game over screen
   gameScreenNode.style.display = "none";
   gameOverScreenNode.style.display = "flex";
-
-  //!3. you need to reset all the elements of the game (allows you to restart)
 }
 
+//Reset game state and return to start screen (beginner-friendly)
+function resetGame() {
+  //Clear intervals
+  if (gameIntervalID) {
+    clearInterval(gameIntervalID);
+    gameIntervalID = null;
+  }
+  if (wormIntervalID) {
+    clearInterval(wormIntervalID);
+    wormIntervalID = null;
+  }
+
+  //Remove worms
+  if (wormArr && wormArr.length > 0) {
+    wormArr.forEach((w) => {
+      if (w && w.node) w.node.remove();
+    });
+  }
+  wormArr = [];
+
+  //Remove pigeons
+  if (pigeonsArr && pigeonsArr.length > 0) {
+    pigeonsArr.forEach((p) => {
+      if (p && p.node) p.node.remove();
+    });
+  }
+  pigeonsArr = [];
+  pigeonObj = null;
+
+  //Remove goat
+  if (goatObj && goatObj.node) {
+    goatObj.node.remove();
+  }
+  goatObj = null;
+
+  //Remove floor
+  if (floorNode) {
+    floorNode.remove();
+    floorNode = null;
+  }
+
+  //Remove restart button if present
+  const btn = document.querySelector("#restart-btn");
+  if (btn) btn.remove();
+
+  //Show start screen and hide game over screen
+  gameOverScreenNode.style.display = "none";
+  startScreenNode.style.display = "flex";
+}
+
+//Main game loop
 function gameLoop() {
-  //console.log("game running at 60fps")
-  goatObj.gravityEffect();
-  //pipeObj.automaticMovement()
-
-  //if(wormArr[wormArr.length - 1].x < 400) {
-  //    wormSpawn()
-  //}
-
   checkwormDespwan();
   checkGoatWormCollision();
 
@@ -127,17 +199,29 @@ function gameLoop() {
 //* EVENT LISTENERS
 startBtnNode.addEventListener("click", startGame);
 
-// Replace clicking the game box with pressing Space to make the goat jump
+//Restart button
+const staticRestartBtn = document.querySelector("#restart-btn"); //Make it static on browser
+if (staticRestartBtn) {
+  staticRestartBtn.addEventListener("click", () => {
+    resetGame();
+  });
+}
+
+//Detectors of key pressing for the goat movement (wasd)
 document.addEventListener("keydown", (e) => {
-  // use event.code to reliably detect the Space key
-  if (e.code === "Space") {
-    // prevent default scrolling
+  const key = e.key.toLowerCase();
+  if (!goatObj) return;
+  if (key === "w") {
     e.preventDefault();
-    if (goatObj) goatObj.jump();
+    goatObj.jump();
+  } else if (key === "s") {
+    e.preventDefault();
+    if (typeof goatObj.fall === "function") goatObj.fall();
+  } else if (key === "a") {
+    e.preventDefault();
+    if (typeof goatObj.left === "function") goatObj.left();
+  } else if (key === "d") {
+    e.preventDefault();
+    if (typeof goatObj.right === "function") goatObj.right();
   }
 });
-
-/*
-style: 
-    -background ✅
-*/
