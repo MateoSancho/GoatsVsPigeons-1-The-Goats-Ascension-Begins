@@ -17,4 +17,12 @@ class Pigeon {
     this.node.style.top = `${this.y}px`;
     this.node.style.left = `${this.x}px`;
   }
+
+  shoot() {
+    //Only for visual effect (help with AI)
+    this.node.style.transform = "scale(1.2)";
+    setTimeout(() => {
+      this.node.style.transform = "scale(1)";
+    }, 100);
+  }
 }

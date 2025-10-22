@@ -30,6 +30,12 @@ class Goat {
     if (this.y - this.jumpSpeed >= 0) {
       this.y -= this.jumpSpeed;
       this.node.style.top = `${this.y}px`;
+
+      //Jump sound
+      if (typeof jumpSound !== 'undefined') {
+        jumpSound.play();
+      }
+      
       //Change image to jump image while jumping, then revert
       const previousSrc = this.node.src;
       this.node.src = "../images/goatjump.png";

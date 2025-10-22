@@ -206,7 +206,13 @@ function resetGame() {
 
 //Main game loop
 function gameLoop() {
-  checkwormDespwan();
+  checkGoatWormCollision();
+
+  //Random pigeon shooting (AI help)
+  if (Math.random() < 0.00 && pigeonsArr.length > 0) {
+    const randomPigeon = pigeonsArr[Math.floor(Math.random() * pigeonsArr.length)];
+    randomPigeon.shoot();
+  }
 
   //Remove worms that passed the game box (left)
   for (let i = wormArr.length - 1; i >= 0; i--) {
@@ -250,10 +256,11 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-/*✅
+/*
 List of remaining things:
   Important:
-    - Ceiling on game screen
+    - Ceiling on game screen ✅
+
     - Styling:
       - main screen
       - game screen 
