@@ -207,11 +207,17 @@ function resetGame() {
 //Main game loop
 function gameLoop() {
   checkwormDespwan();
-  checkGoatWormCollision();
 
-  wormArr.forEach((eachwormObj) => {
-    eachwormObj.automaticMovement();
-  });
+  //Remove worms that passed the game box (left)
+  for (let i = wormArr.length - 1; i >= 0; i--) {
+    wormArr[i].automaticMovement();
+  }
+
+  //Completely left side remove worm (AI help)
+  if (wormArr[i].x + wormArr[i].width < 0) {
+    wormArr[i].node.remove();
+    wormArr.splice(i, 1);
+  }
 }
 
 //* EVENT LISTENERS

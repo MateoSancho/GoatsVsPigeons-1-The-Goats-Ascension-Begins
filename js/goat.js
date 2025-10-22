@@ -26,15 +26,18 @@ class Goat {
 
   //Variable of movement methods for Jump, Fall, Left and Right
   jump() {
-    this.y -= this.jumpSpeed;
-    this.node.style.top = `${this.y}px`;
-    //Change image to jump image while jumping, then revert
-    const previousSrc = this.node.src;
-    this.node.src = "../images/goatjump.png";
-    //After 0,2 seconds the image revert to the initial image
-    setTimeout(() => {
-      this.node.src = previousSrc;
-    }, 200);
+    //Ceiling preventing goat jump above game box
+    if (this.y - this.jumpSpeed >= 0) {
+      this.y -= this.jumpSpeed;
+      this.node.style.top = `${this.y}px`;
+      //Change image to jump image while jumping, then revert
+      const previousSrc = this.node.src;
+      this.node.src = "../images/goatjump.png";
+      //After 0,2 seconds the image revert to the initial image
+      setTimeout(() => {
+       this.node.src = previousSrc;
+      }, 200);
+    }
   }
 
   fall() {
