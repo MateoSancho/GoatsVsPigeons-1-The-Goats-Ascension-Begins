@@ -13,6 +13,24 @@ const gameBoxNode = document.querySelector("#game-box");
 
 //* GLOBAL GAME VARIABLES
 
+//The images must be loaded to erase all delays (AI response)
+//Preload images
+function preloadImages() {
+  const images = [
+    "./images/Goat.png",
+    "./images/goatjump.png",
+    "./images/Worm.png",
+    "./images/PigeonAttack.png",
+  ];
+  
+  images.forEach(src => {
+    const img = new Image();
+    img.src = src;
+  });
+}
+
+window.addEventListener('load', preloadImages);
+
 //Same size for all entities
 const ENTITY_SIZE = 50;
 
@@ -76,7 +94,7 @@ function startGame() {
 
 //Function to spawn worms
 function wormSpawn() {
-  // spawn the worm randomly aligned with one of the pigeons in the column
+  //Spawn the worm randomly aligned with one of the pigeons in the column
   let spawnX = 500;
   let spawnY = 200;
   if (pigeonsArr && pigeonsArr.length > 0) {
@@ -225,3 +243,58 @@ document.addEventListener("keydown", (e) => {
     if (typeof goatObj.right === "function") goatObj.right();
   }
 });
+
+/*✅
+List of remaining things:
+  Important:
+    - Ceiling on game screen
+    - Styling:
+      - main screen
+      - game screen 
+
+    - End Game screen improvement:
+      - css
+      - buttons
+      - others
+
+    - Improve coding:
+      - main
+      - goat
+      - pigeon
+      - worm
+      - others
+
+  Improvement:
+    - Difficulty levels:
+      - noob(0)
+      - normal(1)
+      - difficult(2)
+      - insane(3)
+
+    - Personalize goat:
+      - pink
+      - normal
+      - blue
+      - red
+
+    - Life system:
+      - 3 lifes
+      - shown on game screen
+      - when hit, remove 1
+      - when killed, stop game
+
+    - Timer:
+      -timer shown on game screen, and result when dead
+      -styles
+
+    - Music effects:
+      - goat jump
+      - in game
+      - main screen
+      - hit
+      - shooting
+      - others
+
+    - Screen with creator things
+    - Screen with game explanation
+*/

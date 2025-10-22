@@ -3,16 +3,16 @@ class Goat {
     //Properties defined for the Goat
     this.node = document.createElement("img");
     this.node.src = "../images/Goat.png";
-    // to add the node to the game-box on goat creation
+    //To add the node to the game-box on goat creation
     gameBoxNode.append(this.node);
 
-    // add the initial values of position and dimension, using uniformity from main.js
+    //Add the initial values of position and dimension, using uniformity from main.js
     this.width = ENTITY_SIZE;
     this.height = ENTITY_SIZE;
     this.x = 50;
     this.y = 275;
 
-    // adjust the node with the initial values
+    //Adjust the node with the initial values
     this.node.style.width = `${this.width}px`;
     this.node.style.height = `${this.height}px`;
     this.node.style.position = "absolute";
@@ -28,10 +28,10 @@ class Goat {
   jump() {
     this.y -= this.jumpSpeed;
     this.node.style.top = `${this.y}px`;
-    // change image to jump image while jumping, then revert
+    //Change image to jump image while jumping, then revert
     const previousSrc = this.node.src;
     this.node.src = "../images/goatjump.png";
-    // after 0,2 seconds the image revert to the initial image
+    //After 0,2 seconds the image revert to the initial image
     setTimeout(() => {
       this.node.src = previousSrc;
     }, 200);

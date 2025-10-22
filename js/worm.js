@@ -6,6 +6,7 @@ class Worm {
 
     // add the initial values of position and dimension, using uniformity from main.js    this.width = ENTITY_SIZE;
     this.height = ENTITY_SIZE;
+    this.width = ENTITY_SIZE;
     this.x = spawnX;
     this.y = spawnY;
 
