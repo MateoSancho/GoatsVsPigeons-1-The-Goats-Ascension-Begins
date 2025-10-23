@@ -32,7 +32,7 @@ class Goat {
       this.node.style.top = `${this.y}px`;
 
       //Jump sound
-      if (typeof jumpSound !== 'undefined') {
+      if (typeof jumpSound !== 'undefined' && jumpSound) {
         jumpSound.play();
       }
       

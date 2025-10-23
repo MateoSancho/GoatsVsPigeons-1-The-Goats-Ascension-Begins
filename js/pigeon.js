@@ -25,9 +25,5 @@ class Pigeon {
       this.node.style.transform = "scale(1)";
     }, 100);
 
-    //Play shooting sound
-    if (typeof shootingSound !== 'undefined') {
-        shootingSound.play();
-    }
   }
 }

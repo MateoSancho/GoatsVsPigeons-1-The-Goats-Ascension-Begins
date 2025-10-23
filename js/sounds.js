@@ -19,30 +19,10 @@ class Sound {
   }
 }
 
-class BackgroundMusic {
-  constructor(src) {
-    this.sound = document.createElement("audio");
-    this.sound.src = src;
-    this.sound.setAttribute("preload", "auto");
-    this.sound.setAttribute("controls", "none");
-    this.sound.style.display = "none";
-    this.sound.loop = true;
-    this.sound.volume = 0.3; // Lower volume for background music
-    document.body.appendChild(this.sound);
-  }
+//Create sound elements
+const jumpSound = new Audio("./sounds/jump.mp3");
+const gameOverSound = new Audio("./sounds/gameover.mp3");
 
-  play() {
-    this.sound.play();
-  }
-
-  stop() {
-    this.sound.pause();
-    this.sound.currentTime = 0;
-  }
-}
-
-//Create sound effects
-const jumpSound = new Sound("./sounds/jump.mp3");
-const gameOverSound = new Sound("./sounds/gameover.mp3");
-const shootingSound = new Sound("./sounds/shooting.mp3");
-const backgroundSound = new BackgroundMusic("./sounds/background.mp3");
+//Set audio properties
+jumpSound.preload = "auto";
+gameOverSound.preload = "auto";

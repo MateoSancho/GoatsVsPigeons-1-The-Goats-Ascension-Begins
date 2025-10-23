@@ -75,7 +75,6 @@ function startGame() {
   floorNode.style.left = "0px";
   floorNode.style.width = "100%";
   floorNode.style.height = "10px";
-  floorNode.style.background = "linear-gradient(45deg, #8B4513, #A0522D";
 
   //Placement of the floor right under the goat
   floorNode.style.top = `${goatObj.y + goatObj.height}px`;
@@ -217,6 +216,14 @@ function gameOver() {
   clearInterval(gameIntervalID);
   clearInterval(wormIntervalID);
 
+  //Stop background music and play game over sound
+  if (typeof backgroundSound !== 'undefined' && backgroundSound) {
+    backgroundSound.stop();
+  }
+  if (typeof gameOverSound !== 'undefined' && gameOverSound) {
+    gameOverSound.play();
+  }
+
   //Stop the game screen and show game over screen
   gameScreenNode.style.display = "none";
   gameOverScreenNode.style.display = "flex";
@@ -260,6 +267,11 @@ function resetGame() {
   gameIntervalID = null;
   wormIntervalID = null;
   isGameRunning = false;
+
+  //Stop any playing sounds
+  if (typeof backgroundSound !== 'undefined' && backgroundSound) {
+    backgroundSound.stop();
+  }
 
   //Remove UI
   const uiContainer = document.querySelector("#game-ui");
