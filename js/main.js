@@ -1,55 +1,50 @@
 //* GLOBAL DOM ELEMENTS
 
-//Screens
+//Screens, Buttons, Game box
 const startScreenNode = document.querySelector("#start-screen");
 const gameScreenNode = document.querySelector("#game-screen");
 const gameOverScreenNode = document.querySelector("#game-over-screen");
-
-//Buttons
 const startBtnNode = document.querySelector("#start-btn");
-
-//Game box
 const gameBoxNode = document.querySelector("#game-box");
 
 //* GLOBAL GAME VARIABLES
 
-//The images must be loaded to erase all delays (AI response)
-//Preload images
-function preloadImages() {
-  const images = [
-    "./images/Goat.png",
-    "./images/goatjump.png",
-    "./images/Worm.png",
-    "./images/PigeonAttack.png",
-  ];
-  
-  images.forEach(src => {
-    const img = new Image();
-    img.src = src;
-  });
-}
-
-window.addEventListener('load', preloadImages);
-
-//Same size for all entities
-const ENTITY_SIZE = 50;
-
-let goatObj = null; //The goat isn't at the beginnig yet
+const ENTITY_SIZE = 50; //Same size for all entities
+let goatObj = null;
 let pigeonObj = null;
-let pigeonsArr = []; //Column of pigeons array
+let pigeonsArr = [];
 let wormArr = [];
-
 let gameIntervalID = null;
 let wormIntervalID = null;
 let floorNode = null; // DOM node for the visual floor (created at game start)
 
+//* GAME STATE VARIABLES
+
+let score = 0;
+let lives = 3;
+let gameTime = 0;
+let isGameRunning = false;
+let scoreDisplay = null;
+let livesDisplay = null;
+let timerDisplay = null;
+
 //* GLOBAL GAME FUNCTIONS
+
 function startGame() {
   console.log("starting the game");
+
+  //Reset game state
+  score = 0;
+  lives = 3;
+  gameTime = 0;
+  isGameRunning = true;
 
   //Hide main screen and show the game screen
   startScreenNode.style.display = "none";
   gameScreenNode.style.display = "flex";
+
+  //Create game UI
+  createGameUI();
 
   //Adding inicial game elements
   goatObj = new Goat();
@@ -80,6 +75,7 @@ function startGame() {
   floorNode.style.left = "0px";
   floorNode.style.width = "100%";
   floorNode.style.height = "10px";
+  floorNode.style.background = "linear-gradient(45deg, #8B4513, #A0522D";
 
   //Placement of the floor right under the goat
   floorNode.style.top = `${goatObj.y + goatObj.height}px`;
@@ -90,15 +86,66 @@ function startGame() {
 
   //Start the extra intervals of the game
   wormIntervalID = setInterval(wormSpawn, 1000); //each second
+
+  //Start timer
+  setInterval(() => {
+    if (isGameRunning) {
+      gameTime++;
+      updateUI();
+    }
+  }, 1000);
+}
+
+//Game UI function
+function createGameUI() {
+  const uiContainer = document.createElement("div");
+  uiContainer.id = "game-ui";
+  uiContainer.style.cssText = `
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #d6a800;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+  `;
+
+  scoreDisplay = document.createElement("div");
+  scoreDisplay.id = "score";
+  scoreDisplay.textContent = `Score: ${score}`;
+
+  livesDisplay = document.createElement("div");
+  livesDisplay.id = "lives";
+  livesDisplay.textContent = `Lives: ${lives}`;
+
+  timerDisplay = document.createElement("div");
+  timerDisplay.id = "timer";
+  timerDisplay.textContent = `Time: 0s`;
+
+  uiContainer.appendChild(scoreDisplay);
+  uiContainer.appendChild(livesDisplay);
+  uiContainer.appendChild(timerDisplay);
+
+  gameScreenNode.insertBefore(uiContainer, gameBoxNode);
+}
+
+//Update UI function
+function updateUI() {
+  if (scoreDisplay) scoreDisplay.textContent = `Score: ${score}`;
+  if (livesDisplay) livesDisplay.textContent = `Lives: ${lives}`;
+  if (timerDisplay) timerDisplay.textContent = `Time: ${gameTime}s`;
 }
 
 //Function to spawn worms
 function wormSpawn() {
-  //Spawn the worm randomly aligned with one of the pigeons in the column
   let spawnX = 500;
   let spawnY = 200;
+  //Spawn the worm randomly aligned with one of the pigeons in the column
   if (pigeonsArr && pigeonsArr.length > 0) {
-    const idx = Math.floor(Math.random() * pigeonsArr.length); //Random X position
+    const idx = Math.floor(Math.random() * pigeonsArr.length);
     const p = pigeonsArr[idx];
     spawnX = p.x + p.width + 10;
     spawnY = p.y;
@@ -120,31 +167,52 @@ function checkwormDespwan() {
 
 //Colision detection between the goat and the worms
 function checkGoatWormCollision() {
-  //Use DOM bounding boxes for collision detection to be more robust
-  if (!goatObj) return;
-  const goatRect = goatObj.node.getBoundingClientRect();
+  if (!goatObj || !isGameRunning) return;
 
-  //Compare with each worm's rect
-  for (let eachwormObj of wormArr) {
-    if (!eachwormObj || !eachwormObj.node) continue;
-    const wormRect = eachwormObj.node.getBoundingClientRect();
+  for (let i = wormArr.length - 1; i >= 0; i--) {
+    const eachwormObj = wormArr[i];
 
-    //Check intersection
-    const intersect = !(
-      goatRect.right < wormRect.left ||
-      goatRect.left > wormRect.right ||
-      goatRect.bottom < wormRect.top ||
-      goatRect.top > wormRect.bottom
-    );
-    if (intersect) {
-      console.log("the goat collided with the worm (DOM collision)");
-      gameOver();
-      break;
+    // Colision detection view in class
+    if (
+      goatObj.x < eachwormObj.x + eachwormObj.width &&
+      goatObj.x + goatObj.width > eachwormObj.x &&
+      goatObj.y < eachwormObj.y + eachwormObj.height &&
+      goatObj.y + goatObj.height > eachwormObj.y
+    ) {
+      console.log("the goat collided with the worm");
+
+      //Remove the worm that hit
+      eachwormObj.node.remove();
+      wormArr.splice(i, 1);
+
+      //Handle life loss
+      loseLife();
+      return;
     }
   }
 }
 
+//Life system function
+function loseLife() {
+  lives--;
+  updateUI();
+
+  if (lives <= 0) {
+    gameOver();
+  } else {
+    // Brief invincibility with visual feedback
+    goatObj.node.style.opacity = "0.5";
+    setTimeout(() => {
+      if (goatObj && goatObj.node) {
+        goatObj.node.style.opacity = "1";
+      }
+    }, 1000);
+  }
+}
+
 function gameOver() {
+  isGameRunning = false;
+
   //Stop all Intervals
   clearInterval(gameIntervalID);
   clearInterval(wormIntervalID);
@@ -152,95 +220,110 @@ function gameOver() {
   //Stop the game screen and show game over screen
   gameScreenNode.style.display = "none";
   gameOverScreenNode.style.display = "flex";
+
+  //Add final score display
+  const finalScoreDisplay = document.createElement("div");
+  finalScoreDisplay.textContent = `Final Score: ${score} | Time: ${gameTime}s`;
+  finalScoreDisplay.style.cssText = `
+    color: #d6a800;
+    font-size: 24px;
+    margin: 20px 0;
+    font-family: Arial, sans-serif;`;
+
+  //Add final score to game over screen
+  gameOverScreenNode.insertBefore(
+    finalScoreDisplay,
+    gameOverScreenNode.querySelector("button")
+  );
+
+  //Restart the game elements
+  let restartBtn = document.querySelector("#restart-btn");
+  if (!restartBtn) {
+    restartBtn = document.createElement("button");
+    restartBtn.id = "restart-btn";
+    restartBtn.textContent = "Dangerous Button";
+    restartBtn.style.padding = "12px 20px";
+    restartBtn.style.fontSize = "18px";
+    gameOverScreenNode.append(restartBtn);
+  }
+
+  //Use resetGame instead of page reload
+  restartBtn.onclick = resetGame;
 }
 
-//Reset game state and return to start screen (beginner-friendly)
+//Reset game function
 function resetGame() {
   //Clear intervals
-  if (gameIntervalID) {
-    clearInterval(gameIntervalID);
-    gameIntervalID = null;
-  }
-  if (wormIntervalID) {
-    clearInterval(wormIntervalID);
-    wormIntervalID = null;
-  }
+  if (gameIntervalID) clearInterval(gameIntervalID);
+  if (wormIntervalID) clearInterval(wormIntervalID);
 
-  //Remove worms
-  if (wormArr && wormArr.length > 0) {
-    wormArr.forEach((w) => {
-      if (w && w.node) w.node.remove();
-    });
+  gameIntervalID = null;
+  wormIntervalID = null;
+  isGameRunning = false;
+
+  //Remove UI
+  const uiContainer = document.querySelector("#game-ui");
+  if (uiContainer) uiContainer.remove();
+
+  //Remove game elements
+  if (wormArr.length > 0) {
+    wormArr.forEach((w) => w.node.remove());
   }
   wormArr = [];
 
-  //Remove pigeons
-  if (pigeonsArr && pigeonsArr.length > 0) {
-    pigeonsArr.forEach((p) => {
-      if (p && p.node) p.node.remove();
-    });
+  if (pigeonsArr.length > 0) {
+    pigeonsArr.forEach((p) => p.node.remove());
   }
   pigeonsArr = [];
   pigeonObj = null;
 
-  //Remove goat
   if (goatObj && goatObj.node) {
     goatObj.node.remove();
   }
   goatObj = null;
 
-  //Remove floor
   if (floorNode) {
     floorNode.remove();
     floorNode = null;
   }
 
-  //Remove restart button if present
-  const btn = document.querySelector("#restart-btn");
-  if (btn) btn.remove();
+  // emove final score display
+  const finalScore = gameOverScreenNode.querySelector("div");
+  if (finalScore && !finalScore.querySelector("button")) {
+    finalScore.remove();
+  }
 
-  //Show start screen and hide game over screen
+  //Show start screen
   gameOverScreenNode.style.display = "none";
   startScreenNode.style.display = "flex";
 }
 
 //Main game loop
 function gameLoop() {
+  if (!isGameRunning) return;
+
+  checkwormDespwan();
   checkGoatWormCollision();
 
-  //Random pigeon shooting (AI help)
-  if (Math.random() < 0.00 && pigeonsArr.length > 0) {
-    const randomPigeon = pigeonsArr[Math.floor(Math.random() * pigeonsArr.length)];
-    randomPigeon.shoot();
-  }
+  wormArr.forEach((eachwormObj) => {
+    eachwormObj.automaticMovement();
 
-  //Remove worms that passed the game box (left)
-  for (let i = wormArr.length - 1; i >= 0; i--) {
-    wormArr[i].automaticMovement();
-  }
-
-  //Completely left side remove worm (AI help)
-  if (wormArr[i].x + wormArr[i].width < 0) {
-    wormArr[i].node.remove();
-    wormArr.splice(i, 1);
-  }
+    //Add score when worms leave screen safely
+    if (eachwormObj.x + eachwormObj.width < 0) {
+      score += 10;
+      updateUI();
+    }
+  });
 }
 
 //* EVENT LISTENERS
 startBtnNode.addEventListener("click", startGame);
 
-//Restart button
-const staticRestartBtn = document.querySelector("#restart-btn"); //Make it static on browser
-if (staticRestartBtn) {
-  staticRestartBtn.addEventListener("click", () => {
-    resetGame();
-  });
-}
-
 //Detectors of key pressing for the goat movement (wasd)
 document.addEventListener("keydown", (e) => {
   const key = e.key.toLowerCase();
-  if (!goatObj) return;
+  if (!goatObj || !isGameRunning) return;
+
   if (key === "w") {
     e.preventDefault();
     goatObj.jump();
@@ -255,33 +338,3 @@ document.addEventListener("keydown", (e) => {
     if (typeof goatObj.right === "function") goatObj.right();
   }
 });
-
-/*
-List of remaining things:
-  Important:
-    - Styling:
-      - main screen
-      - game screen 
-
-  Improvement:
-    - Difficulty levels:
-      - noob(0)
-      - normal(1)
-      - difficult(2)
-      - insane(3)
-
-    - Life system:
-      - 3 lifes
-      - shown on game screen
-      - when hit, remove 1
-      - when killed, stop game
-
-    - Timer:
-      -timer shown on game screen, and result when dead
-      -styles
-
-    - Music effects
-
-    - Screen with creator things
-    - Screen with game explanation
-*/
