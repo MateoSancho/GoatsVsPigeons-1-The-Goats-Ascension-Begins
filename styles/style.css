@@ -31,6 +31,18 @@ body {
   margin: 50px;
 }
 
+#start-screen{
+  background: linear-gradient(45deg, #1a1a1a, #2d1b00 );
+  color: white;
+  text-align: center;
+  padding: 40px 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 50px rgba(214, 168, 0, 0.7);
+  border: 3px solid #d6a800;
+  max-width: 500px;
+  margin: 50px auto;
+}
+
 #StartImages {
   margin: 0;
   display: flex;
@@ -77,7 +89,29 @@ body {
   pointer-events: none; /* prevents elements in the game-box to be dragged */
 }
 
-#game-screen,
+#game-screen {
+  display: none;
+}
+
 #game-over-screen {
   display: none;
+  background: linear-gradient(45deg, #1a1a1a, #2d1b00 );
+  color: white;
+  text-align: center;
+  padding: 40px 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 50px rgba(214, 168, 0, 0.7);
+  border: 3px solid #d6a800;
+  max-width: 500px;
+  margin: 50px auto;
+}
+
+#restart-btn {
+  background-color: rgb(214, 168, 0);
+  color: rgb(0, 0, 0);
+  padding: 20px;
+  font-size: 30px;
+  margin-top: 60px;
+  border-radius: 20px;
+  font-family: Amatica SC;
 }

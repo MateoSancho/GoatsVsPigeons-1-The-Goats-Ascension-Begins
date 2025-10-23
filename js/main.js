@@ -259,23 +259,9 @@ document.addEventListener("keydown", (e) => {
 /*
 List of remaining things:
   Important:
-    - Ceiling on game screen ✅
-
     - Styling:
       - main screen
       - game screen 
-
-    - End Game screen improvement:
-      - css
-      - buttons
-      - others
-
-    - Improve coding:
-      - main
-      - goat
-      - pigeon
-      - worm
-      - others
 
   Improvement:
     - Difficulty levels:
@@ -283,12 +269,6 @@ List of remaining things:
       - normal(1)
       - difficult(2)
       - insane(3)
-
-    - Personalize goat:
-      - pink
-      - normal
-      - blue
-      - red
 
     - Life system:
       - 3 lifes
@@ -300,13 +280,7 @@ List of remaining things:
       -timer shown on game screen, and result when dead
       -styles
 
-    - Music effects:
-      - goat jump
-      - in game
-      - main screen
-      - hit
-      - shooting
-      - others
+    - Music effects
 
     - Screen with creator things
     - Screen with game explanation
