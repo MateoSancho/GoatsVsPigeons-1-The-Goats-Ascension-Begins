@@ -25,3 +25,4 @@ class Worm {
     this.node.style.left = `${this.x}px`;
   }
 }
+
