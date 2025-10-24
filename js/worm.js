@@ -1,7 +1,7 @@
 class Worm {
   constructor(spawnX = 500, spawnY = 200) {
     this.node = document.createElement("img");
-    this.node.src = "../images/Worm.png";
+    this.node.src = "./images/Worm.png";
     gameBoxNode.append(this.node);
 
     // add the initial values of position and dimension, using uniformity from main.js    this.width = ENTITY_SIZE;

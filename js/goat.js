@@ -2,7 +2,7 @@ class Goat {
   constructor() {
     //Properties defined for the Goat
     this.node = document.createElement("img");
-    this.node.src = "../images/Goat.png";
+    this.node.src = "./images/Goat.png";
     //To add the node to the game-box on goat creation
     gameBoxNode.append(this.node);
 

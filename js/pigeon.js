@@ -1,7 +1,7 @@
 class Pigeon {
   constructor() {
     this.node = document.createElement("img");
-    this.node.src = "../images/PigeonAttack.png";
+    this.node.src = "./images/PigeonAttack.png";
     gameBoxNode.append(this.node);
 
     // add the initial values of position and dimension, using uniformity from main.js
