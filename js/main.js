@@ -140,13 +140,13 @@ function updateUI() {
 
 //Function to spawn worms
 function wormSpawn() {
-  let spawnX = 500;
+  let spawnX = 450;
   let spawnY = 200;
   //Spawn the worm randomly aligned with one of the pigeons in the column
   if (pigeonsArr && pigeonsArr.length > 0) {
     const idx = Math.floor(Math.random() * pigeonsArr.length);
     const p = pigeonsArr[idx];
-    spawnX = p.x + p.width + 10;
+    spawnX = p.x;
     spawnY = p.y;
   } else if (pigeonObj) {
     spawnX = pigeonObj.x + pigeonObj.width + 10;
