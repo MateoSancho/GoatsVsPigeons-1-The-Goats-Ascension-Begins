@@ -38,7 +38,7 @@ class Goat {
       
       //Change image to jump image while jumping, then revert
       const previousSrc = this.node.src;
-      this.node.src = "../images/goatjump.png";
+      this.node.src = "./images/goatjump.png";
       //After 0,2 seconds the image revert to the initial image
       setTimeout(() => {
        this.node.src = previousSrc;
